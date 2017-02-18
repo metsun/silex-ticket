@@ -20,11 +20,33 @@
 			<div class="col-xs-12">
 				<a href="{{ path("ticket.olustur") }}" class="btn btn-primary pull-right">Ticket Oluştur</a>
 				
+			  	{% if tickets %}
+			  	<h1>Son Yolladığım Ticketlar</h1>
 				<div class="son-ticketler">
-						
+					
+					<table class="table">
+					  <thead>
+					  	<tr>
+					  		<td>Başlık</td>
+					  		<td>Durum</td>
+					  		<td>Mesaj Yaz</td>
+					  	</tr>
+					  </thead>
+					  <tbody>
+						 {% for ticket in tickets %}
+							<tr>
+								<td>{{ ticket.baslik }} </td>
+								<td>{{ ticket.durum }}</td>
+								<td><a href="{{ path('ticket.goster', {id: ticket.id})  }}">Cevap Yaz</a></td>
+							</tr>
+							
 
+						 {% endfor %}		
+					  </tbody>
+					</table>
 
 				</div>
+				{% endif %}
 	
 			</div>
 		</div>

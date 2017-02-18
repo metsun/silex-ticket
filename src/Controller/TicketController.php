@@ -39,6 +39,7 @@ class TicketController implements ControllerProviderInterface {
 
         // Ticket işlemleri
         $indexController->match("/ticket", array($this, 'ticketOlustur'))->bind('ticket.olustur');
+        $indexController->match("/ticket/goster/{id}", array($this, 'ticketGoster'))->bind('ticket.goster');
 
 
 
@@ -58,19 +59,46 @@ class TicketController implements ControllerProviderInterface {
         return $indexController;
     }
 
+    /**
+     *
+     * Anasayfa
+     *
+     */
+    public function index(Application $app) {
+        
+        $em = $app['db.orm.em'];
+
+        $giris = $app['session']->get("giris");
+
+        if($giris){
+
+            // $tickets = $em->findAll('Entity\Ticket', array('user' => $id));
+
+            // user'ı al
+            $user = $em->find('Entity\User', $app["session"]->get('giris')["id"]);
+
+            $tickets = $em->getRepository('Entity\Ticket')->findBy( array('user' => $user) );;
+
+            // kullanıcıya son oluşturduğu ticketları gösterelim
+            return $app['twig']->render('Ticket/anasayfa.twig', 
+                array('tickets' => $tickets)
+            );
+
+        }else{
+
+            return $app['twig']->render('Ticket/anasayfa.twig');
+
+        }
+    }
+
+
+
     // Test amaçlı
     public function sc(Application $app){
         $uye = $app['session']->get('giris');
         $this->uyelik = $uye;
         $app['twig']->addGlobal('oturum', "var");
         return $app->json($this->uyelik);
-    }
-
-    // Çıkış Yaptırır
-    public function sil(Application $app){
-        $app['session']->remove('giris');
-
-        return $app->redirect($app["url_generator"]->generate("anasayfa"));
     }
 
      // giris yap action
@@ -116,6 +144,7 @@ class TicketController implements ControllerProviderInterface {
             $app['session']->set('giris', array(
                     "kullanıcı" => $kadi,
                     "rol"       => $entities->getRoles(),
+                    "id"        => $entities->getId(),
                 ));
 
             return $app->redirect($app["url_generator"]->generate("anasayfa"));
@@ -132,7 +161,12 @@ class TicketController implements ControllerProviderInterface {
 
     }
 
+    // Çıkış Yaptırır
+    public function sil(Application $app){
+        $app['session']->remove('giris');
 
+        return $app->redirect($app["url_generator"]->generate("anasayfa"));
+    }
 
     //
     // test amacıyla
@@ -150,28 +184,6 @@ class TicketController implements ControllerProviderInterface {
 
 
 
-    /**
-     *
-     * Anasayfa
-     *
-     */
-    public function index(Application $app) {
-        
-        $em = $app['db.orm.em'];
-
-        $giris = $app['session']->get("giris");
-
-        if($giris){
-
-            // kullanıcıya son oluşturduğu ticketları gösterelim
-            return $app['twig']->render('Ticket/anasayfa.twig');
-
-        }else{
-
-            return $app['twig']->render('Ticket/anasayfa.twig');
-
-        }
-    }
 
 
     //
@@ -203,26 +215,53 @@ class TicketController implements ControllerProviderInterface {
             //
             // formdan gelen veriyi al
             //
-            
-            $message = $request->request->all();
-            $kadi = $message["user"]["username"];
-            $sifre = $message["user"]["password"];
 
             // doctrine'i çağır
+            $data = $request->request->all();
             $em = $app['db.orm.em'];
-            
-            // bu verilerle uyuşan bir kullanıcı var mı?
-            $entities = $em->getRepository('Entity\User')->findOneBy(array("username" => $kadi, "password" => $sifre));
 
-            // yoksa
-            if(!$entities){
+            // günü al
+            $gun = strftime("%d %B %Y, %A, %H:%M", time()); 
 
-                // error gönder
-                return new Response("Sistemde bu bilgilerle kayıtlı bir kullanıcı bulunamadı");
 
+            // dosyayı al
+            $files = $request->files->get($form->getName());
+
+            if( $files["filepath"] ){
+                /* taşınacağı yer */
+                $path = __DIR__.'/../../web/upload/';
+                // dosya adı
+                $filename = sha1(uniqid(mt_rand(), true)) . ".". $files['filepath']->guessExtension();
+                // dosyayi taşı
+                $files['filepath']->move($path,$filename);
+
+                // dosyayı kaydet
+                $entity->setFilepath($filename);
             }
+            
+            // ticket açık
+            $entity->setDurum(1);
+            // formdan gelmeyen verileri set edelim
+            $entity->setDatetime($gun);
 
-            return $app->redirect($app["url_generator"]->generate("anasayfa"));
+            // user'ı al
+            $user = $em->find('Entity\User', $app["session"]->get('giris')["id"]);
+
+            $entity->setUser($user);
+
+            // database e bas
+            $em->persist($entity);
+            $em->flush();
+
+            // ticket'ı gösteren sayfaya yönlendir
+            return new Response('Ticket bu id ile kayıt edildi: '.$entity->getId());
+
+            //return $app->json($files);
+        
+            // $em->persist($entity);
+            // $em->flush();
+
+            // return $app->redirect($app["url_generator"]->generate("anasayfa"));
          }
 
 
@@ -236,6 +275,19 @@ class TicketController implements ControllerProviderInterface {
 
     }
 
+
+    //
+    // Ticket Gösterme
+    // 
+
+    public function ticketGoster(Application $app, Request $request, $id){
+
+        // ticket'ı bul
+        $user = $em->find('Entity\Ticket', $id);
+
+        return $user->getUser();
+
+    }
 
     // /**
     //  * Show entity

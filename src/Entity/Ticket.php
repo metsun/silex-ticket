@@ -22,6 +22,14 @@ class Ticket
     private $id;
 
     /**
+     * @var integer
+     *
+     * @OneToOne(targetEntity="User")
+     * @JoinColumn(name="user_id", referencedColumnName="id")
+     */
+    private $user;
+
+    /**
      * @var text
      *
      * @Column(name="baslik", type="text")
@@ -38,16 +46,16 @@ class Ticket
     /**
      * @var text
      *
-     * @Column(name="filepath", type="text")
+     * @Column(name="filepath", type="text", nullable=true)
      */
-    private $filepath;    
+    private $filepath = null;    
 
     /**
      * @var integer
      *
      * @Column(name="durum", type="integer", length=11)
      */
-    private $durum;
+    private $durum = 1;
 
     /**
      * @var string
@@ -64,9 +72,9 @@ class Ticket
     private $kategori;
     
     /**
-     * @var datetime
+     * @var string
      *
-     * @Column(name="datetime", type="datetime")
+     * @Column(name="datetime", type="string")
      */
     private $datetime;
 
@@ -186,29 +194,6 @@ class Ticket
         return $this->kategori;
     }
 
-    /**
-     * Set datetime
-     *
-     * @param \DateTime $datetime
-     *
-     * @return Ticket
-     */
-    public function setDatetime($datetime)
-    {
-        $this->datetime = $datetime;
-
-        return $this;
-    }
-
-    /**
-     * Get datetime
-     *
-     * @return \DateTime
-     */
-    public function getDatetime()
-    {
-        return $this->datetime;
-    }
 
     /**
      * Set ticketcevap
@@ -280,5 +265,53 @@ class Ticket
     public function getFilepath()
     {
         return $this->filepath;
+    }
+
+    /**
+     * Set datetime
+     *
+     * @param string $datetime
+     *
+     * @return Ticket
+     */
+    public function setDatetime($datetime)
+    {
+        $this->datetime = $datetime;
+
+        return $this;
+    }
+
+    /**
+     * Get datetime
+     *
+     * @return string
+     */
+    public function getDatetime()
+    {
+        return $this->datetime;
+    }
+
+    /**
+     * Set user
+     *
+     * @param \Entity\User $user
+     *
+     * @return Ticket
+     */
+    public function setUser(\Entity\User $user = null)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return \Entity\User
+     */
+    public function getUser()
+    {
+        return $this->user;
     }
 }
