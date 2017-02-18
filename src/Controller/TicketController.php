@@ -12,8 +12,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use Entity\User;
 use Entity\Ticket;
+use Entity\TicketCevap;
 use Form\UserType;
 use Form\TicketType;
+use Form\TicketCevapType;
  
 /**
  * Sample controller
@@ -40,6 +42,7 @@ class TicketController implements ControllerProviderInterface {
         // Ticket işlemleri
         $indexController->match("/ticket", array($this, 'ticketOlustur'))->bind('ticket.olustur');
         $indexController->match("/ticket/goster/{id}", array($this, 'ticketGoster'))->bind('ticket.goster');
+        $indexController->match("/ticket/cevapla", array($this, 'cevapEkle'))->bind('ticket.cevap.ekle');
 
 
 
@@ -74,10 +77,14 @@ class TicketController implements ControllerProviderInterface {
 
             // $tickets = $em->findAll('Entity\Ticket', array('user' => $id));
 
-            // user'ı al
-            $user = $em->find('Entity\User', $app["session"]->get('giris')["id"]);
-
-            $tickets = $em->getRepository('Entity\Ticket')->findBy( array('user' => $user) );;
+            // kullanıcı admin mi
+            if( $giris["rol"] == 1 ){
+                $tickets = $em->getRepository('Entity\Ticket')->findBy(array(), array('id' => 'DESC') );
+            }else{
+                // user'ı al
+                $user = $em->find('Entity\User', $app["session"]->get('giris')["id"]);
+                $tickets = $em->getRepository('Entity\Ticket')->findBy( array('user' => $user) );
+            }
 
             // kullanıcıya son oluşturduğu ticketları gösterelim
             return $app['twig']->render('Ticket/anasayfa.twig', 
@@ -103,6 +110,13 @@ class TicketController implements ControllerProviderInterface {
 
      // giris yap action
     public function girisyapAction(Request $request, Application $app){
+
+        // kullanıcı giriş yapmış mı
+        if($this->kullaniciKontrol($app)){
+            return $app->redirect($app["url_generator"]->generate("anasayfa"));
+        }
+
+
         $em = $app['db.orm.em'];
 
         // entityi çağır
@@ -196,6 +210,8 @@ class TicketController implements ControllerProviderInterface {
         // giriş kontrolü
         //
         if(!$this->uye){
+
+            $app['session']->getFlashBag()->add('danger', 'ilk önce giriş yapmalısınız');
             return $app->redirect($app["url_generator"]->generate("kullanici.giris"));
         }
 
@@ -255,12 +271,6 @@ class TicketController implements ControllerProviderInterface {
 
             // ticket'ı gösteren sayfaya yönlendir
             return $app->redirect($app['url_generator']->generate('ticket.goster', array('id' => $entity->getId())));
-            //return $app->json($files);
-        
-            // $em->persist($entity);
-            // $em->flush();
-
-            // return $app->redirect($app["url_generator"]->generate("anasayfa"));
          }
 
 
@@ -280,6 +290,13 @@ class TicketController implements ControllerProviderInterface {
     // 
 
     public function ticketGoster(Application $app, Request $request, $id){
+
+        // kullanıcı giriş yapmış mı
+        if(!$this->kullaniciKontrol($app)){
+            $app['session']->getFlashBag()->add('danger', 'ilk önce giriş yapmalısınız');
+            return $app->redirect($app["url_generator"]->generate("kullanici.giris"));
+        }
+
         $em = $app['db.orm.em'];
 
 
@@ -295,6 +312,24 @@ class TicketController implements ControllerProviderInterface {
 
         // bu kişiye ait ticketları bul
         if($tickets){
+            //
+            // cevap formu
+            //
+            // entityi çağır
+            $cevap = new TicketCevap();
+
+            // form oluşturucu
+            $form = $app['form.factory']->create(new TicketCevapType(), $cevap);
+            // ticket'a ait cevapları al
+            $cevaplar = $em->getRepository('Entity\TicketCevap')->findBy( array('ticketcevap' => $tickets) );
+
+            if($cevaplar){
+
+                return $app['twig']->render('Ticket/ticket-goster.twig', array(
+                   'ticket' => $tickets,
+                   'cevaplar' => $cevaplar
+                ));
+            }
 
             return $app['twig']->render('Ticket/ticket-goster.twig', array(
                 'ticket' => $tickets,
@@ -305,6 +340,71 @@ class TicketController implements ControllerProviderInterface {
         $app['session']->getFlashBag()->add('danger', 'bu ticketı görme yetkiniz yok');
 
         return $app->redirect($app['url_generator']->generate('anasayfa'));
+    }
+
+
+    //
+    // Ticket'e cevap ekle
+    //
+
+    public function cevapEkle(Application $app, Request $request){
+
+        // kullanıcı giriş yapmış mı
+        if(!$this->kullaniciKontrol($app)){
+            $app['session']->getFlashBag()->add('danger', 'önce giriş yapmalısınız');
+            return $app->redirect($app["url_generator"]->generate("anasayfa"));
+        }
+
+
+        $session = $app['session']->get('giris');
+        if($request->getMethod() == 'POST'){
+
+            $cevap = $request->request->all();
+
+            $em = $app['db.orm.em'];
+
+            $entity = new TicketCevap();
+            
+            //
+            // güvenlik
+            //
+
+            // kişi bu ticket'a cevap verebilir mi
+            $userKontrol = $em->getRepository('Entity\User')->findOneBy( array('id' => $session["id"]) );
+            $ticketKontrol = $em->getRepository('Entity\Ticket')->findOneBy( array('user' => $userKontrol) );
+
+            if(!$ticketKontrol && $session["rol"] != 1){
+                $app['session']->getFlashBag()->add('danger', 'bu ticketa cevap veremezsiniz');
+                return $app->redirect($app['url_generator']->generate('anasayfa'));
+            }
+
+            //
+            // 1- User Datasını Al 
+            // 2- Asıl Ticket Id'sini al
+            // 3- Günü belirle
+            //
+            $tickets = $em->getRepository('Entity\Ticket')->findOneBy( array('id' => $cevap["id"]) );
+            $userself = $em->getRepository('Entity\User')->findOneBy( array('id' => $session["id"]) );
+            $gun = strftime("%d %B %Y, %A, %H:%M", time()); 
+           
+            // Kaydet
+            // user
+            $entity->setUserId($userself);
+            // ticket cevap orm
+            $entity->setTicketcevap($tickets);
+            // gün
+            $entity->setDatetime($gun);
+            // cevap
+            $entity->setCevap($cevap["cevap"]);
+
+            // database e bas
+            $em->persist($entity);
+            $em->flush();
+
+            return $app->redirect($app['url_generator']->generate('ticket.goster', array('id' => $cevap["id"])));
+
+        }
+
     }
 
     // /**
@@ -330,8 +430,13 @@ class TicketController implements ControllerProviderInterface {
      *
      */
     public function create(Application $app, Request $request) {
-
         // doctrine
+        // kullanıcı giriş yapmış mı
+        if($this->kullaniciKontrol($app)){
+            $app['session']->getFlashBag()->add('warning', 'zaten üyesiniz');
+            return $app->redirect($app["url_generator"]->generate("anasayfa"));
+        }
+
         $em = $app['db.orm.em'];
         $entity = new User();
 
@@ -355,6 +460,7 @@ class TicketController implements ControllerProviderInterface {
             $em->persist($entity);
             $em->flush();
 
+            $app['session']->getFlashBag()->add('success', 'Üyeliğiniz oluşturuldu, şimdi giriş yapabilirsiniz');
             return $app->redirect($app['url_generator']->generate('anasayfa'));
         }
 
@@ -362,6 +468,16 @@ class TicketController implements ControllerProviderInterface {
             'entity' => $entity,
             'form' => $form->createView()
         ));
+    }
+
+
+    public function kullaniciKontrol(Application $app, $rol = 0){
+
+        if(!$this->uye){
+            return false;
+        }
+
+        return true;
     }
     
     // /**

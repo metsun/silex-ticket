@@ -78,14 +78,6 @@ class Ticket
      */
     private $datetime;
 
-    /**
-     * @var integer
-     *
-     * @ManyToOne(targetEntity="TicketCevap")
-     * @JoinColumn(name="ticketcevap_id", referencedColumnName="id")
-     */
-    private $ticketcevap;
-
 
 
     /**
@@ -192,31 +184,6 @@ class Ticket
     public function getKategori()
     {
         return $this->kategori;
-    }
-
-
-    /**
-     * Set ticketcevap
-     *
-     * @param \Entity\TicketCevap $ticketcevap
-     *
-     * @return Ticket
-     */
-    public function setTicketcevap(\Entity\TicketCevap $ticketcevap = null)
-    {
-        $this->ticketcevap = $ticketcevap;
-
-        return $this;
-    }
-
-    /**
-     * Get ticketcevap
-     *
-     * @return \Entity\TicketCevap
-     */
-    public function getTicketcevap()
-    {
-        return $this->ticketcevap;
     }
 
     /**

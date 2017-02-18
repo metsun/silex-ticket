@@ -10,6 +10,12 @@
 		<div class="container">
 			<div class="col-xs-12">
 				<h1>Hoşgeldin {{app.session.get('giris').kullanıcı }}</h1>
+				{% if app.session.get('giris').rol == 1 %}
+					<div class="alert alert-success alert-dismissable">
+	                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+	                    <p>Admin olduğunuz için bütün ticketları görüyorsunuz</p>
+                    </div>
+                {% endif %}
 				<p>Hoşgeldiniz anasayfaya, çıkış yapmak için tıklayın <a href="{{ path('sil') }}"> Çıkış Yap </a></p>
 			</div>
 		</div>
@@ -21,7 +27,7 @@
 				<a href="{{ path("ticket.olustur") }}" class="btn btn-primary pull-right">Ticket Oluştur</a>
 				
 			  	{% if tickets %}
-			  	<h1>Son Yolladığım Ticketlar</h1>
+			  	{% if app.session.get('giris').rol == 0 %}<h1>Son Yolladığım Ticketlar</h1>{% else %} <h1>Son Yollanan Ticketler</h1>{% endif %}
 				<div class="son-ticketler">
 					
 					<table class="table">

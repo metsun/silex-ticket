@@ -1,15 +1,11 @@
 {% extends 'layout.html.twig' %}
 
-{% block title %}Ticket Göster{% endblock title %}
-{% block description %}{% endblock description %}
-{% block h1 %}{% endblock h1 %}
-
 {% block content %}
 	{% if app.session.get('giris') %}
 		
 		<div class="container">
 			<div class="col-xs-12">
-				<h1>{{ ticket.baslik }}</h1>
+				<h1>Ticket Detayları</h1>
 			</div>
 		</div>
 	
@@ -20,15 +16,37 @@
 				
 				<h1>Başlık: {{ ticket.baslik }}</h1>
 				<p>İçerik: {{ ticket.icerik }}</p>
-	
+				<p>Oluşturan: {{ ticket.user.username }}</p>
+				
 			</div>
 		</div>
+		
+		<h1>Cevaplar</h1>
+		
+		<div class="cevaplar">
+			{% if cevaplar is defined %}
+				{% for cevap in cevaplar %}
+	 				<blockquote {% if cevap.userId.roles == 1 %} class="blockquote-reverse" {% endif %} >
+					  <p>{{ cevap.cevap }}</p>
+					  <footer>{{ cevap.userId.username }}</footer>
+					</blockquote>
+				{% endfor %}
+			{% endif %}
+		</div>
 
-
+	
+		<form action="{{ path('ticket.cevap.ekle') }}" method="post" class="col-sm-4">
+            <div class="form-group">
+            	<label class="control-label required" for="ticket_cevap">Cevap Yaz</label>
+				<textarea id="ticket_cevap" name="cevap" required="required" class="form-control"></textarea>
+            </div>
+            <input type="hidden" name="id" value="{{ ticket.id }}">
+            <input class="btn btn-primary" type="submit" name="submit" />
+        </form>
 
 	{% else %}
 
-		Hoşgeldin giriş yapmak için tıkla <a href="{{ path('kullanici.giris') }}"> Giriş Yap</a>
+		İlk önce <a href="{{ path('kullanici.giris') }}"> Giriş Yap</a>
 
 	{% endif %}
 

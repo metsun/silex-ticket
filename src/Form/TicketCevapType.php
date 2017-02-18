@@ -12,7 +12,7 @@ class TicketCevapType extends AbstractType
     {
         
         $builder
-            ->add('mesaj', 'text', array(
+            ->add('cevap', 'text', array(
                 'label' => 'Mesaj',
                 ))
         ;

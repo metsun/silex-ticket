@@ -44,8 +44,12 @@
               </ul>
               <ul class="nav navbar-nav navbar-right">
                 <li class=""><a href="{{ path("anasayfa") }}">Anasayfa</a></li>
-                <li class=""><a href="{{ path("kullanici.giris") }}">Giriş Yap</a></li>
-                <li class=""><a href="{{ path("kullanici.olustur") }}">Kayıt Ol</a></li>
+                {% if app.session.get('giris') %}
+                    <li><a href="{{ path("sil") }}">Çıkış Yap</a></li>
+                {% else %}
+                <li><a href="{{ path("kullanici.giris") }}">Giriş Yap</a></li>
+                <li><a href="{{ path("kullanici.olustur") }}">Kayıt Ol</a></li>
+                {% endif %}
               </ul>
             </div>
           </div>

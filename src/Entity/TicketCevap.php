@@ -22,6 +22,22 @@ class TicketCevap
     private $id;
 
     /**
+     * @var integer
+     *
+     * @ManyToOne(targetEntity="User")
+     * @JoinColumn(name="user_id", referencedColumnName="id")
+     */
+    private $user_id;
+
+    /**
+     * @var integer
+     *
+     * @ManyToOne(targetEntity="Ticket")
+     * @JoinColumn(name="ticketcevap_id", referencedColumnName="id")
+     */
+    private $ticketcevap;
+
+    /**
      * @var text
      *
      * @Column(name="cevap", type="text")
@@ -29,9 +45,9 @@ class TicketCevap
     private $cevap;
 
     /**
-     * @var datetime 
+     * @var string
      *
-     * @Column(name="datetime", type="datetime")
+     * @Column(name="datetime", type="string")
      */
     private $datetime;
 
@@ -70,10 +86,60 @@ class TicketCevap
         return $this->cevap;
     }
 
+
+    /**
+     * Set userId
+     *
+     * @param \Entity\User $userId
+     *
+     * @return TicketCevap
+     */
+    public function setUserId(\Entity\User $userId = null)
+    {
+        $this->user_id = $userId;
+
+        return $this;
+    }
+
+    /**
+     * Get userId
+     *
+     * @return \Entity\User
+     */
+    public function getUserId()
+    {
+        return $this->user_id;
+    }
+
+
+    /**
+     * Set ticketcevap
+     *
+     * @param \Entity\Ticket $ticketcevap
+     *
+     * @return TicketCevap
+     */
+    public function setTicketcevap(\Entity\Ticket $ticketcevap = null)
+    {
+        $this->ticketcevap = $ticketcevap;
+
+        return $this;
+    }
+
+    /**
+     * Get ticketcevap
+     *
+     * @return \Entity\Ticket
+     */
+    public function getTicketcevap()
+    {
+        return $this->ticketcevap;
+    }
+
     /**
      * Set datetime
      *
-     * @param \DateTime $datetime
+     * @param string $datetime
      *
      * @return TicketCevap
      */
@@ -87,7 +153,7 @@ class TicketCevap
     /**
      * Get datetime
      *
-     * @return \DateTime
+     * @return string
      */
     public function getDatetime()
     {
