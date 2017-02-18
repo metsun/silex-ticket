@@ -2,13 +2,13 @@
 
 {% block title %}Ticket Sistemi{% endblock title %}
 {% block description %}{% endblock description %}
-{% block h1 %}<h1>Kullanıcı Oluştur</h1>{% endblock h1 %}
+{% block h1 %}<h1>Ticket Oluştur</h1>{% endblock h1 %}
 
 {% block content %}
     <div class="row">
-        <form action="{{ path('kullanici.olustur') }}" method="post" class="col-sm-4">
-            {{ form_widget(form, {form_type: 'vertical'}) }}
+        <form action="{{ path('ticket.olustur') }}" method="post" class="col-sm-4">
+            {{ form_widget(form, {form_type: 'vertical', 'attr': {'class': 'form-control'} }) }}
             <input class="btn btn-primary" type="submit" name="submit" />
         </form>
-    </div>
+    </div> 
 {% endblock content %}

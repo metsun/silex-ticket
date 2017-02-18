@@ -2,15 +2,40 @@
 
 {% block title %}Kullanıcılar{% endblock title %}
 {% block description %}{% endblock description %}
-{% block h1 %}<h1>Listele <a href="{{ path('user_create') }}" class="btn btn-default">Kullanıcı Oluştur</a></h1>{% endblock h1 %}
+{% block h1 %}{% endblock h1 %}
 
 {% block content %}
-    
-    <ul>
-        {% for entity in entities %}
-            <li>Id : {{ entity.id }}, Username : {{ entity.username }}, Password: {{ entity.password }}  || 
-            </li>      
-        {% endfor %}
-    </ul>
+	{% if app.session.get('giris') %}
+		
+		<div class="container">
+			<div class="col-xs-12">
+				<h1>Hoşgeldin {{app.session.get('giris').kullanıcı }}</h1>
+				<p>Hoşgeldiniz anasayfaya, çıkış yapmak için tıklayın <a href="{{ path('sil') }}"> Çıkış Yap </a></p>
+			</div>
+		</div>
+	
+
+		{# son ticketler #}
+		<div class="container">
+			<div class="col-xs-12">
+				<a href="{{ path("ticket.olustur") }}" class="btn btn-primary pull-right">Ticket Oluştur</a>
+				
+				<div class="son-ticketler">
+						
+
+
+				</div>
+	
+			</div>
+		</div>
+
+
+
+	{% else %}
+
+		Hoşgeldin giriş yapmak için tıkla <a href="{{ path('kullanici.giris') }}"> Giriş Yap</a>
+
+	{% endif %}
+
 
 {% endblock content %}

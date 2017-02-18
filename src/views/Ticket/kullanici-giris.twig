@@ -2,11 +2,11 @@
 
 {% block title %}Giriş Yap{% endblock title %}
 {% block description %}{% endblock description %}
-{% block h1 %}<h1>Kullanıcı Oluştur</h1>{% endblock h1 %}
+{% block h1 %}<h1>Kullanıcı Girişi</h1>{% endblock h1 %}
 
 {% block content %}
     <div class="row">
-        <form action="{{ path('user_giris') }}" method="post" class="col-sm-4">
+        <form action="{{ path('kullanici.giris') }}" method="post" class="col-sm-4">
             {{ form_widget(form, {form_type: 'vertical'}) }}
             <input class="btn btn-primary" type="submit" name="submit" />
         </form>
