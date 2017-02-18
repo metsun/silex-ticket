@@ -1,0 +1,45 @@
+<?php
+
+namespace Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * User
+ *
+ * @Entity
+ * @Table(name="user")
+ */
+class User
+{
+	/**
+     * @var integer
+     * 
+     * @Column(name="id", type="integer")
+     * @Id
+     * @GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var string
+     * 
+     * @Column(name="username", type="string", length=255)
+     */
+    private $username;
+
+    /**
+     * @var string
+     * 
+     * @Column(name="password", type="string", length=255)
+     */
+    private $password;
+
+    /**
+     * @var string
+     * 
+     * @Column(name="roles", type="string", length=255)
+     */
+    private $roles;
+
+}

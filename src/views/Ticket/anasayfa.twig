@@ -1,0 +1,16 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Kullanıcılar{% endblock title %}
+{% block description %}{% endblock description %}
+{% block h1 %}<h1>Listele <a href="{{ path('user_create') }}" class="btn btn-default">Kullanıcı Oluştur</a></h1>{% endblock h1 %}
+
+{% block content %}
+    
+    <ul>
+        {% for entity in entities %}
+            <li>Id : {{ entity.id }}, Username : {{ entity.username }}, Password: {{ entity.password }}  || 
+            </li>      
+        {% endfor %}
+    </ul>
+
+{% endblock content %}

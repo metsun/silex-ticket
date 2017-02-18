@@ -37,10 +37,12 @@ $app->register(new SessionServiceProvider(), array(
 $app->register(new DoctrineServiceProvider(), array(
     'db.options' => array(
         'driver'        => 'pdo_mysql',
-        'host'          => 'localhost',
-        'dbname'        => 'xxx',
-        'user'          => 'xxx',
-        'password'      => 'xxx',
+        'charset'       => 'utf8',
+        'port'          => '8889',
+        'host'          => '127.0.0.1',
+        'dbname'        => 'silex-kitchen-deneme',
+        'user'          => 'root',
+        'password'      => 'root',
     ),
 ));
 
