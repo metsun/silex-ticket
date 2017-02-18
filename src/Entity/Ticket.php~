@@ -24,7 +24,7 @@ class Ticket
     /**
      * @var integer
      *
-     * @OneToOne(targetEntity="User")
+     * @ManyToOne(targetEntity="User")
      * @JoinColumn(name="user_id", referencedColumnName="id")
      */
     private $user;
@@ -313,5 +313,36 @@ class Ticket
     public function getUser()
     {
         return $this->user;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->user = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add user
+     *
+     * @param \Entity\User $user
+     *
+     * @return Ticket
+     */
+    public function addUser(\Entity\User $user)
+    {
+        $this->user[] = $user;
+
+        return $this;
+    }
+
+    /**
+     * Remove user
+     *
+     * @param \Entity\User $user
+     */
+    public function removeUser(\Entity\User $user)
+    {
+        $this->user->removeElement($user);
     }
 }

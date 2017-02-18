@@ -1,0 +1,36 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Ticket Göster{% endblock title %}
+{% block description %}{% endblock description %}
+{% block h1 %}{% endblock h1 %}
+
+{% block content %}
+	{% if app.session.get('giris') %}
+		
+		<div class="container">
+			<div class="col-xs-12">
+				<h1>{{ ticket.baslik }}</h1>
+			</div>
+		</div>
+	
+
+		{# son ticketler #}
+		<div class="container">
+			<div class="col-xs-12">
+				
+				<h1>Başlık: {{ ticket.baslik }}</h1>
+				<p>İçerik: {{ ticket.icerik }}</p>
+	
+			</div>
+		</div>
+
+
+
+	{% else %}
+
+		Hoşgeldin giriş yapmak için tıkla <a href="{{ path('kullanici.giris') }}"> Giriş Yap</a>
+
+	{% endif %}
+
+
+{% endblock content %}

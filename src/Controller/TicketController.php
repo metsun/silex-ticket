@@ -254,8 +254,7 @@ class TicketController implements ControllerProviderInterface {
             $em->flush();
 
             // ticket'ı gösteren sayfaya yönlendir
-            return new Response('Ticket bu id ile kayıt edildi: '.$entity->getId());
-
+            return $app->redirect($app['url_generator']->generate('ticket.goster', array('id' => $entity->getId())));
             //return $app->json($files);
         
             // $em->persist($entity);
@@ -281,12 +280,31 @@ class TicketController implements ControllerProviderInterface {
     // 
 
     public function ticketGoster(Application $app, Request $request, $id){
+        $em = $app['db.orm.em'];
 
-        // ticket'ı bul
-        $user = $em->find('Entity\Ticket', $id);
 
-        return $user->getUser();
+        // user'ı al
+        $user = $em->find('Entity\User', $app["session"]->get('giris')["id"]);
 
+        // eğer adminse bütün ticketları göster
+        if($app["session"]->get('giris')["rol"] == 1){
+            $tickets = $em->getRepository('Entity\Ticket')->findOneBy( array('id' => $id) );
+        }else{
+            $tickets = $em->getRepository('Entity\Ticket')->findOneBy( array('id' => $id, 'user' => $user) );
+        }
+
+        // bu kişiye ait ticketları bul
+        if($tickets){
+
+            return $app['twig']->render('Ticket/ticket-goster.twig', array(
+                'ticket' => $tickets,
+            ));
+
+        }
+
+        $app['session']->getFlashBag()->add('danger', 'bu ticketı görme yetkiniz yok');
+
+        return $app->redirect($app['url_generator']->generate('anasayfa'));
     }
 
     // /**
