@@ -234,7 +234,7 @@ class TicketController implements ControllerProviderInterface {
             // onem seçilmiş mi
             if($form["onem"]){
 
-                $filtre["onem"] = $form["onem"];
+                $filtre["onem"] = $form["onem"] - 1;
 
             }
             // baslik seçilmiş mi
@@ -249,7 +249,7 @@ class TicketController implements ControllerProviderInterface {
             }
 
             // return $app->json($filtre);
-            return $filtre;
+            // return $filtre;
 
             $sonuc = $em->getRepository('Entity\Ticket')->findBy($filtre);
 
@@ -260,8 +260,8 @@ class TicketController implements ControllerProviderInterface {
                 if($form["kategori"]){
                     $gonder["kategori"] = $form["kategori"];
                 }
-                if($form["onem"] == 0){
-                    $gonder["onem"] = 0;
+                if($form["onem"] == 1){
+                    $gonder["onem"] = "var";
                 }
 
                 return $app["twig"]->render('Ticket/detayli-arama-sonuc.twig', $gonder);

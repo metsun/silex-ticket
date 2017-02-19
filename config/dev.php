@@ -9,15 +9,15 @@ use Symfony\Bridge\Doctrine\Form\DoctrineOrmExtension;
 require __DIR__.'/prod.php';
 
 // enable the debug mode
-$app['debug'] = true;
+//$app['debug'] = true;
 
 $app->register(new MonologServiceProvider(), array(
     'monolog.logfile' => __DIR__.'/../var/logs/silex_dev.log',
 ));
 
-$app->register(new WebProfilerServiceProvider(), array(
-    'profiler.cache_dir' => __DIR__.'/../var/cache/profiler',
-));
+// $app->register(new WebProfilerServiceProvider(), array(
+//     'profiler.cache_dir' => __DIR__.'/../var/cache/profiler',
+// ));
 
 // Doctrine Brigde for form extension
 $app['form.extensions'] = $app->share($app->extend('form.extensions', function ($extensions) use ($app) {
