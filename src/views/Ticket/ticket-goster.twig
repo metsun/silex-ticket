@@ -35,7 +35,7 @@
 					<dt>Durum</dt>
 					<dd>{% if ticket.durum == 1 %} Açık {% else %} <span style="color:green">Çözüldü</span>{% endif %}</dd>
 					<dt>Oluşturulma Tarihi</dt>
-					<dd>{{ ticket.datetime|date('d/m/Y') }}</dd>
+					<dd>{{ ticket.datetime }}</dd>
 				</dl>
 			</div>
 		</div>

@@ -1,0 +1,116 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Arama Sonuçları{% endblock title %}
+{% block description %}{% endblock description %}
+{% block h1 %}{% endblock h1 %}
+
+{% block content %}
+	{% if app.session.get('giris') %}
+		
+		<div class="container">
+			<div class="col-xs-12">
+				<h1>Arama sonuçları</h1>
+			</div>
+		</div>
+	
+
+		{# son ticketler #}
+		<div class="container">
+			<div class="col-xs-12">
+				
+			  	{% if tickets %}
+			  	{% if app.session.get('giris').rol == 0 %}<h1>Son Yolladığım Ticketlar</h1>{% else %} <h1>Son Yollanan Ticketler</h1>{% endif %}
+				<div class="son-ticketler">
+					
+					<table class="table">
+					  <thead>
+					  	<tr>
+					  		<td>Başlık</td>
+					  		<td>Kategoriler</td>
+					  		<td>Durum</td>
+					  		<td>Önem</td>
+					  		<td>Gör</td>
+					  	</tr>
+					  </thead>
+					  <tbody>
+						 {% for ticket in tickets %}
+						 	
+						 	{% if onem is defined and ticket.onem != 0 %}
+						 		
+						 	{% else %}
+
+							 	{% if kategori is defined %}
+									{% for kategoriTicket in ticket.kategori %}
+										{% if kategori == kategoriTicket.id %}
+											<tr>
+												<td>{{ ticket.baslik }} </td>
+												<td>
+													{% for kategoriler in ticket.kategori %}
+
+														{{ kategoriler.isim }} | 
+
+													{% endfor %}
+												</td>
+
+												{#<td>{{ ticket.kategori.isim }}</td>#}
+												<td>{% if ticket.durum == 1 %} Açık {% else %} <span style="color:green">Çözüldü</span>{% endif %}</td>
+												<td>{% if ticket.onem == 0 %}
+														<span style="color:green">Düşük</span>
+													{% elseif ticket.onem == 1 %}
+														<span style="color:orange">Orta</span>
+													{% else %}
+														<span style="color:red">Acil</span>
+													{% endif %}</td>
+												<td><a href="{{ path('ticket.goster', {id: ticket.id})  }}">Gör</a></td>
+											</tr>
+										{% endif %}
+									{% endfor %}
+								{% else %}
+									
+									<tr>
+										<td>{{ ticket.baslik }} </td>
+										<td>
+											{% for kategoriler in ticket.kategori %}
+
+												{{ kategoriler.isim }} | 
+
+											{% endfor %}
+										</td>
+
+										{#<td>{{ ticket.kategori.isim }}</td>#}
+										<td>{% if ticket.durum == 1 %} Açık {% else %} <span style="color:green">Çözüldü</span>{% endif %}</td>
+										<td>
+											{% if ticket.onem == 0 %}
+							<span style="color:green">Düşük</span>
+						{% elseif ticket.onem == 1 %}
+							<span style="color:orange">Orta</span>
+						{% else %}
+							<span style="color:red">Acil</span>
+						{% endif %}
+										</td>
+										<td><a href="{{ path('ticket.goster', {id: ticket.id})  }}">Gör</a></td>
+									</tr>
+
+								{% endif %}
+							{% endif %}
+
+						 {% endfor %}		
+					  </tbody>
+					</table>
+
+				</div>
+				{% endif %}
+	
+			</div>
+		</div>
+
+
+
+	{% else %}
+
+		Hoşgeldin giriş yapmak için tıkla <a href="{{ path('kullanici.giris') }}"> Giriş Yap</a>
+
+	{% endif %}
+
+
+{% endblock content %}

@@ -199,12 +199,14 @@ class TicketController implements ControllerProviderInterface {
         //
         // detaylı arama
         //
-        $zaman = "19/02/2017";
-        $replace = str_replace("/", ".", $zaman);
+        // $zaman = "19/02/2017";
+        // $replace = str_replace("/", ".", $zaman);
 
-        return $app->json($replace);
+        // return $app->json($replace);
 
-        return $app->json(strtotime('19.02.2017'));
+        // return $app->json(strtotime('19.02.2017'));
+
+        return strftime("%d/%m/%Y", time()); 
 
     }
 
@@ -224,6 +226,48 @@ class TicketController implements ControllerProviderInterface {
         $kategoriler = $em->getRepository('Entity\Kategori')->findAll();
 
         if($request->getMethod() == 'POST'){
+
+            $filtre = array();
+
+            $form = $request->request->all();
+
+            // onem seçilmiş mi
+            if($form["onem"]){
+
+                $filtre["onem"] = $form["onem"];
+
+            }
+            // baslik seçilmiş mi
+            if($form["baslik"]){
+                $filtre["baslik"] = $form["baslik"];
+            }
+
+            // tarih seçilmiş mi
+            if($form["tarih"]){
+
+                $filtre["datetime"] = $form["tarih"];
+            }
+
+            // return $app->json($filtre);
+            return $filtre;
+
+            $sonuc = $em->getRepository('Entity\Ticket')->findBy($filtre);
+
+            if($sonuc){
+                $gonder = array();
+
+                $gonder['tickets'] = $sonuc; 
+                if($form["kategori"]){
+                    $gonder["kategori"] = $form["kategori"];
+                }
+                if($form["onem"] == 0){
+                    $gonder["onem"] = 0;
+                }
+
+                return $app["twig"]->render('Ticket/detayli-arama-sonuc.twig', $gonder);
+            }
+
+            $app['session']->getFlashBag()->add('warning', 'Bu filtrelerle uyuşan bir ticket bulunamadı');
 
         }
 
@@ -278,7 +322,7 @@ class TicketController implements ControllerProviderInterface {
             $em = $app['db.orm.em'];
 
             // günü al
-            $gun = time(); 
+            $gun = strftime("%d/%m/%Y", time()); 
 
 
             // dosyayı al
@@ -426,7 +470,7 @@ class TicketController implements ControllerProviderInterface {
             //
             $tickets = $em->getRepository('Entity\Ticket')->findOneBy( array('id' => $cevap["id"]) );
             $userself = $em->getRepository('Entity\User')->findOneBy( array('id' => $session["id"]) );
-            $gun = time(); 
+            $gun = strftime("%d/%m/%Y", time()); 
            
             // Kaydet
             // user
