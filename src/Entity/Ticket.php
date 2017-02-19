@@ -67,7 +67,8 @@ class Ticket
     /**
      * @var string
      *
-     * @Column(name="kategori", type="string", length=255)
+     * @ManyToOne(targetEntity="Kategori")
+     * @JoinColumn(name="kategori_id", referencedColumnName="id")
      */
     private $kategori;
     

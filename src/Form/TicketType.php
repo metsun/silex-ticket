@@ -5,6 +5,7 @@ namespace Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Form\Extensions\Doctrine\Bridge;
 
 class TicketType extends AbstractType
 {
@@ -15,10 +16,13 @@ class TicketType extends AbstractType
 	        ->add('baslik', 'text', array(
                 'label' => 'Ticket Başlığı',
                 ))
-            ->add('kategori', 'choice', array(
-                 'label' => 'Kategori',
-                 'choices' => array( "Satış / Muhasebe", "Teknik Destek", "Domain" )
-                ))
+/*            ->add('kategori', EntityType::class, array(
+                'class' => 'Entity:Kategori',
+                'choice_label' => 'isim',
+            ))*/
+            ->add('kategori', 'entity', 
+                array('class'=>'Entity\Kategori', 'property'=>'isim', 
+            ))
             ->add('onem', 'choice', array(
                  'label' => 'Önemi',
                  'choices' => array( "Düşük", "Orta", "Yüksek" ),

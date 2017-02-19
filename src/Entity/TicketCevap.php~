@@ -135,4 +135,28 @@ class TicketCevap
     {
         return $this->ticketcevap;
     }
+
+    /**
+     * Set datetime
+     *
+     * @param string $datetime
+     *
+     * @return TicketCevap
+     */
+    public function setDatetime($datetime)
+    {
+        $this->datetime = $datetime;
+
+        return $this;
+    }
+
+    /**
+     * Get datetime
+     *
+     * @return string
+     */
+    public function getDatetime()
+    {
+        return $this->datetime;
+    }
 }

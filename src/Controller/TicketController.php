@@ -13,9 +13,11 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Entity\User;
 use Entity\Ticket;
 use Entity\TicketCevap;
+use Entity\Kategori;
 use Form\UserType;
 use Form\TicketType;
 use Form\TicketCevapType;
+use Form\KategoriType;
  
 /**
  * Sample controller
@@ -43,6 +45,10 @@ class TicketController implements ControllerProviderInterface {
         $indexController->match("/ticket", array($this, 'ticketOlustur'))->bind('ticket.olustur');
         $indexController->match("/ticket/goster/{id}", array($this, 'ticketGoster'))->bind('ticket.goster');
         $indexController->match("/ticket/cevapla", array($this, 'cevapEkle'))->bind('ticket.cevap.ekle');
+        $indexController->match("/ticket/kapat/{id}", array($this, 'ticketKapat'))->bind('ticket.kapat');
+
+        // Kategori Oluştur
+        $indexController->match("/kategori", array($this, 'kategoriOlustur'))->bind('kategori');
 
 
 
@@ -470,6 +476,66 @@ class TicketController implements ControllerProviderInterface {
         ));
     }
 
+
+    public function ticketKapat(Application $app, $id){
+
+        $session = $app["session"]->get("giris");
+
+        // admin ise
+        if($session["rol"] == 1 ){
+            $em = $app['db.orm.em'];
+
+            $data = $em->getRepository('Entity\Ticket')->findOneBy( array('id' => $id) ); 
+            $data->setDurum(0);
+
+            $em->persist($data);
+            $em->flush();
+
+            return $app->redirect($app['url_generator']->generate('ticket.goster', array("id" => $id)));
+        }
+
+    }
+
+    //
+    // Kategori Oluşturur
+    //
+    public function kategoriOlustur(Application $app, Request $request){
+
+        $session = $app["session"]->get("giris");
+        
+        // admin değilse anasayfaya geri yolla
+        if( $session["rol"] != 1){
+            return $app->redirect($app['url_generator']->generate('anasayfa'));
+        }
+
+        $em = $app['db.orm.em'];
+
+        // entityi çağır
+        $entity = new Kategori();
+
+        // form oluşturucu
+        $form = $app['form.factory']->create(new KategoriType(), $entity);
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+
+            $em->persist($entity);
+            $em->flush();
+
+            $app['session']->getFlashBag()->add('success', 'Kategori oluşturuldu');
+            return $app->redirect($app['url_generator']->generate('kategori'));
+
+        }
+
+        //
+        // form oluştur
+        //
+        return $app['twig']->render('Ticket/kategori-olustur.twig', array(
+            'entity' => $entity,
+            'form' => $form->createView()
+        ));
+
+    } 
 
     public function kullaniciKontrol(Application $app, $rol = 0){
 

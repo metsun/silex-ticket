@@ -13,11 +13,28 @@
 		{# son ticketler #}
 		<div class="container">
 			<div class="col-xs-12">
-				
-				<h1>Başlık: {{ ticket.baslik }}</h1>
-				<p>İçerik: {{ ticket.icerik }}</p>
-				<p>Oluşturan: {{ ticket.user.username }}</p>
-				
+				<dl class="dl-horizontal">
+					<dt>Başlık:</dt>
+					<dd>{{ ticket.baslik }}</dd>
+					<dt>Önemi:</dt>
+					<dd>
+						{% if ticket.onem == 0 %}
+							<span style="color:green">Düşük</span>
+						{% elseif ticket.onem == 1 %}
+							<span style="color:orange">Orta</span>
+						{% else %}
+							<span style="color:red">Acil</span>
+						{% endif %}
+					</dd>
+					<dt>İçerik:</dt>
+					<dd>{{ ticket.icerik }}</dd>
+					<dt>Oluşturan</dt>
+					<dd>{{ ticket.user.username }}</dd>
+					<dt>Ekler</dt>
+					<dd>{% if ticket.filepath %} <a href="{{ app.request.basepath }}/upload/{{ticket.filepath}}">Eki Gör</a>{% else %} Ek Yok {% endif %}</dd>
+					<dt>Durum</dt>
+					<dd>{% if ticket.durum == 1 %} Açık {% else %} <span style="color:red">Kapandı</span>{% endif %}</dd>
+				</dl>
 			</div>
 		</div>
 		
@@ -34,16 +51,21 @@
 			{% endif %}
 		</div>
 
+		{% if ticket.durum == 1 %}
+			<form action="{{ path('ticket.cevap.ekle') }}" method="post" class="col-sm-4">
+	            <div class="form-group">
+	            	<label class="control-label required" for="ticket_cevap">Cevap Yaz</label>
+					<textarea id="ticket_cevap" name="cevap" required="required" class="form-control"></textarea>
+	            </div>
+	            <input type="hidden" name="id" value="{{ ticket.id }}">
+	            <input class="btn btn-primary" type="submit" name="submit" />
+	        </form>
+        {% endif %}
 	
-		<form action="{{ path('ticket.cevap.ekle') }}" method="post" class="col-sm-4">
-            <div class="form-group">
-            	<label class="control-label required" for="ticket_cevap">Cevap Yaz</label>
-				<textarea id="ticket_cevap" name="cevap" required="required" class="form-control"></textarea>
-            </div>
-            <input type="hidden" name="id" value="{{ ticket.id }}">
-            <input class="btn btn-primary" type="submit" name="submit" />
-        </form>
-
+		{% if app.session.get('giris').rol == 1 %}
+			<a href="{{ path('ticket.kapat', { id: ticket.id }) }}" class="btn btn-danger btn-big pull-right" style="margin-top: 40px">Ticket'ı Kapat</a>
+		{% endif %}
+		
 	{% else %}
 
 		İlk önce <a href="{{ path('kullanici.giris') }}"> Giriş Yap</a>

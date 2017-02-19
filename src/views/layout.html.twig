@@ -45,7 +45,14 @@
               <ul class="nav navbar-nav navbar-right">
                 <li class=""><a href="{{ path("anasayfa") }}">Anasayfa</a></li>
                 {% if app.session.get('giris') %}
+
+                    {% if app.session.get('giris').rol == 1 %}
+                        <li><a href="{{ path("kategori") }}">Kategori Oluştur</a></li>
+                        <li><a href="#">Detaylı Arama</a></li>
+                    {% endif %}
+           
                     <li><a href="{{ path("sil") }}">Çıkış Yap</a></li>
+           
                 {% else %}
                 <li><a href="{{ path("kullanici.giris") }}">Giriş Yap</a></li>
                 <li><a href="{{ path("kullanici.olustur") }}">Kayıt Ol</a></li>
