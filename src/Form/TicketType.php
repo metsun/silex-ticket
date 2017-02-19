@@ -6,6 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Form\Extensions\Doctrine\Bridge;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 class TicketType extends AbstractType
 {
@@ -16,12 +17,10 @@ class TicketType extends AbstractType
 	        ->add('baslik', 'text', array(
                 'label' => 'Ticket Başlığı',
                 ))
-/*            ->add('kategori', EntityType::class, array(
-                'class' => 'Entity:Kategori',
-                'choice_label' => 'isim',
-            ))*/
-            ->add('kategori', 'entity', 
-                array('class'=>'Entity\Kategori', 'property'=>'isim', 
+            ->add('kategori', 'entity', array(
+                'class'=>'Entity\Kategori', 
+                'property'=>'isim',
+                'multiple' => true 
             ))
             ->add('onem', 'choice', array(
                  'label' => 'Önemi',

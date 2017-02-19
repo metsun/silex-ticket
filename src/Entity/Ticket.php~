@@ -65,10 +65,9 @@ class Ticket
     private $onem;
 
     /**
-     * @var string
-     *
-     * @ManyToOne(targetEntity="Kategori")
-     * @JoinColumn(name="kategori_id", referencedColumnName="id")
+     * Many Kategori have Many Ticket.
+     * @ManyToMany(targetEntity="Kategori", inversedBy="holder")
+     * @JoinTable(name="ticket_kategori")
      */
     private $kategori;
     
@@ -78,7 +77,6 @@ class Ticket
      * @Column(name="datetime", type="string")
      */
     private $datetime;
-
 
 
     /**
@@ -259,19 +257,6 @@ class Ticket
         return $this->datetime;
     }
 
-    /**
-     * Set user
-     *
-     * @param \Entity\User $user
-     *
-     * @return Ticket
-     */
-    public function setUser(\Entity\User $user = null)
-    {
-        $this->user = $user;
-
-        return $this;
-    }
 
     /**
      * Get user
@@ -288,6 +273,8 @@ class Ticket
     public function __construct()
     {
         $this->user = new \Doctrine\Common\Collections\ArrayCollection();
+
+        $this->kategori = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -312,5 +299,20 @@ class Ticket
     public function removeUser(\Entity\User $user)
     {
         $this->user->removeElement($user);
+    }
+
+
+    /**
+     * Set user
+     *
+     * @param \Entity\User $user
+     *
+     * @return Ticket
+     */
+    public function setUser(\Entity\User $user = null)
+    {
+        $this->user = $user;
+
+        return $this;
     }
 }

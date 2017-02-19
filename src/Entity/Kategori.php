@@ -22,13 +22,26 @@ class Kategori
     private $id;
 
     /**
-     * @var string
-     * 
-     * @Column(name="isim", type="string", length=255)
+     * @var text 
+     *
+     * @Column(name="isim", type="text")
      */
     private $isim;
 
+    /**
+     * Many Kategoris have Many Tickets.
+     * @ManyToMany(targetEntity="Ticket", mappedBy="kategori")
+     */
+    private $holder;
 
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->holder = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
     /**
      * Get id
@@ -62,5 +75,39 @@ class Kategori
     public function getIsim()
     {
         return $this->isim;
+    }
+
+    /**
+     * Add holder
+     *
+     * @param \Entity\Ticket $holder
+     *
+     * @return Kategori
+     */
+    public function addHolder(\Entity\Ticket $holder)
+    {
+        $this->holder[] = $holder;
+
+        return $this;
+    }
+
+    /**
+     * Remove holder
+     *
+     * @param \Entity\Ticket $holder
+     */
+    public function removeHolder(\Entity\Ticket $holder)
+    {
+        $this->holder->removeElement($holder);
+    }
+
+    /**
+     * Get holder
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getHolder()
+    {
+        return $this->holder;
     }
 }

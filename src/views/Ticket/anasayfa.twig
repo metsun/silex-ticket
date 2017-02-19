@@ -42,7 +42,13 @@
 						 {% for ticket in tickets %}
 							<tr>
 								<td>{{ ticket.baslik }} </td>
-								<td>{{ ticket.kategori.isim }}</td>
+								<td>
+									{% for kategori in ticket.kategori %}
+										{{ kategori.isim }}
+									{% endfor %}
+								</td>
+
+								{#<td>{{ ticket.kategori.isim }}</td>#}
 								<td>{% if ticket.durum == 1 %} Açık {% else %} <span style="color:red">Kapandı</span>{% endif %}</td>
 								<td><a href="{{ path('ticket.goster', {id: ticket.id})  }}">Gör</a></td>
 							</tr>

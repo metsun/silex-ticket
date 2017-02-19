@@ -22,45 +22,17 @@ class Kategori
     private $id;
 
     /**
-     * @var string
-     * 
-     * @Column(name="isim", type="string", length=255)
+     * @var text 
+     *
+     * @Column(name="isim", type="text")
      */
     private $isim;
 
-
-
     /**
-     * Get id
-     *
-     * @return integer
+     * Many Kategoris have Many Tickets.
+     * @ManyToMany(targetEntity="Ticket", mappedBy="kategori")
      */
-    public function getId()
-    {
-        return $this->id;
-    }
+    private $holder;
 
-    /**
-     * Set isim
-     *
-     * @param string $isim
-     *
-     * @return Kategori
-     */
-    public function setIsim($isim)
-    {
-        $this->isim = $isim;
 
-        return $this;
-    }
-
-    /**
-     * Get isim
-     *
-     * @return string
-     */
-    public function getIsim()
-    {
-        return $this->isim;
-    }
 }
