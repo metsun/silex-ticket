@@ -48,7 +48,7 @@
 
                     {% if app.session.get('giris').rol == 1 %}
                         <li><a href="{{ path("kategori") }}">Kategori Oluştur</a></li>
-                        <li><a href="#">Detaylı Arama</a></li>
+                        <li><a href="{{ path("arama") }}">Detaylı Arama</a></li>
                     {% endif %}
            
                     <li><a href="{{ path("sil") }}">Çıkış Yap</a></li>

@@ -33,7 +33,7 @@
 					  <thead>
 					  	<tr>
 					  		<td>Başlık</td>
-					  		<td>Kategori</td>
+					  		<td>Kategoriler</td>
 					  		<td>Durum</td>
 					  		<td>Gör</td>
 					  	</tr>
@@ -44,12 +44,12 @@
 								<td>{{ ticket.baslik }} </td>
 								<td>
 									{% for kategori in ticket.kategori %}
-										{{ kategori.isim }}
+										{{ kategori.isim }} | 
 									{% endfor %}
 								</td>
 
 								{#<td>{{ ticket.kategori.isim }}</td>#}
-								<td>{% if ticket.durum == 1 %} Açık {% else %} <span style="color:red">Kapandı</span>{% endif %}</td>
+								<td>{% if ticket.durum == 1 %} Açık {% else %} <span style="color:green">Çözüldü</span>{% endif %}</td>
 								<td><a href="{{ path('ticket.goster', {id: ticket.id})  }}">Gör</a></td>
 							</tr>
 							

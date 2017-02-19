@@ -50,6 +50,9 @@ class TicketController implements ControllerProviderInterface {
         // Kategori Oluştur
         $indexController->match("/kategori", array($this, 'kategoriOlustur'))->bind('kategori');
 
+        //Arama
+        $indexController->match("/arama", array($this, 'detayliArama'))->bind('arama');
+
 
 
         $app->before(function (Request $request, Application $app) {
@@ -193,9 +196,41 @@ class TicketController implements ControllerProviderInterface {
     //
     public function oturum(Application $app){
 
-        $oturum = $app['session']->get('giris');
+        //
+        // detaylı arama
+        //
+        $zaman = "19/02/2017";
+        $replace = str_replace("/", ".", $zaman);
 
-        return $app->json($oturum);
+        return $app->json($replace);
+
+        return $app->json(strtotime('19.02.2017'));
+
+    }
+
+
+    public function detayliArama(Application $app, Request $request){
+
+        $session = $app["session"]->get("giris");
+
+        if($session["rol"] != 1){
+            return new Response("arama yapma yetkiniz yok");
+        }
+        // doctrine'i çağır
+        $em = $app['db.orm.em'];
+
+        // ticketlar
+        $ticketlar = $em->getRepository('Entity\Ticket')->findAll();
+        $kategoriler = $em->getRepository('Entity\Kategori')->findAll();
+
+        if($request->getMethod() == 'POST'){
+
+        }
+
+        return $app['twig']->render('Ticket/detayli-arama.twig', array(
+            'ticketlar' => $ticketlar,
+            'kategoriler' => $kategoriler
+        ));
 
     }
 
@@ -243,7 +278,7 @@ class TicketController implements ControllerProviderInterface {
             $em = $app['db.orm.em'];
 
             // günü al
-            $gun = strftime("%d %B %Y, %A, %H:%M", time()); 
+            $gun = time(); 
 
 
             // dosyayı al
@@ -391,7 +426,7 @@ class TicketController implements ControllerProviderInterface {
             //
             $tickets = $em->getRepository('Entity\Ticket')->findOneBy( array('id' => $cevap["id"]) );
             $userself = $em->getRepository('Entity\User')->findOneBy( array('id' => $session["id"]) );
-            $gun = strftime("%d %B %Y, %A, %H:%M", time()); 
+            $gun = time(); 
            
             // Kaydet
             // user

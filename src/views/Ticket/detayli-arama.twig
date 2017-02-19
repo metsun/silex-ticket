@@ -1,0 +1,39 @@
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+	
+	<div class="container">
+		<div class="col-xs-12">
+			<form action="{{ path('arama') }}" method="post" class="col-sm-4">
+	            <div class="form-group">
+	            	<label class="control-label required" for="ticket_onem">Önemi</label>
+					<select id="ticket_onem" name="onem" class="form-control">
+						<option value=""> Seçiniz ( isteğe bağlı )</option>
+						<option value="0">Düşük</option>
+						<option value="1">Orta</option>
+						<option value="2">Acil</option>	
+					</select>
+	            </div>
+	            <div class="form-group">
+	            	<label class="control-label required" for="ticket_kategoriler">Kategori</label>
+					<select id="ticket_kategoriler" name="kategori" class="form-control">
+						<option value=""> Seçiniz ( isteğe bağlı ) </option>
+						{% for kategori in kategoriler %}
+							<option value="{{ kategori.id }}">{{ kategori.isim }}</option>
+						{% endfor %}
+					</select>
+	            </div>
+	            <div class="form-group">
+	            	<label class="control-label required" for="ticket_baslik">Başlık</label>
+	            	<input type="text" id="ticket_baslik" class="form-control">
+	            </div>
+	            <div class="form-group">
+	            	<label class="control-label required" for="ticket_tarih">Eklenme Tarihi</label>
+	            	<input type="text" id="ticket_tarih" class="form-control" placeholder="01/02/2017">
+	            </div>
+	            <input class="btn btn-primary" type="submit" name="submit" value="Ara" />
+	        </form>
+		</div>
+	</div>
+
+{% endblock %}

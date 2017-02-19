@@ -33,7 +33,9 @@
 					<dt>Ekler</dt>
 					<dd>{% if ticket.filepath %} <a href="{{ app.request.basepath }}/upload/{{ticket.filepath}}">Eki Gör</a>{% else %} Ek Yok {% endif %}</dd>
 					<dt>Durum</dt>
-					<dd>{% if ticket.durum == 1 %} Açık {% else %} <span style="color:red">Kapandı</span>{% endif %}</dd>
+					<dd>{% if ticket.durum == 1 %} Açık {% else %} <span style="color:green">Çözüldü</span>{% endif %}</dd>
+					<dt>Oluşturulma Tarihi</dt>
+					<dd>{{ ticket.datetime|date('d/m/Y') }}</dd>
 				</dl>
 			</div>
 		</div>
